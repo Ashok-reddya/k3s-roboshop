@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+  namespace: roboshop
+  labels:
+    component: mongodb
+    project: roboshop
+    tier: database
+spec:
+ # NO selector — a selectorless Service lets the manual Endpoints below drive it
+  ports:
+  - protocol: TCP
+    port: 27017 
+    targetPort: 27017 
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: mongodb  # MUST equal the Service name
+  namespace: roboshop
+subsets:
+  - addresses:
+      - ip: 172.31.1.94  # mongo box private IP
+    ports:
+      - port: 27017
