@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysql
+  namespace: roboshop
+  labels:
+    component: mysql
+    project: roboshop
+    tier: database
+type: Opaque
+data:
+  MYSQL_ROOT_PASSWORD: "Um9ib1Nob3BAMQ==" # base64 encoded value of "Roboshop@1"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+  namespace: roboshop
+  labels:
+    component: mysql
+    project: roboshop
+    tier: database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: mysql
+      project: roboshop
+      tier: database
+  template:
+    metadata:
+      labels:
+        component: mysql
+        project: roboshop
+        tier: database
+    spec:
+      containers:
+      - name: mysql
+        image: joindevops/mysql:v1
+        args:
+          - "--mysql-native-password=ON"
+        envFrom:
+          - secretRef:
+              name: mysql
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  namespace: roboshop
+  labels:
+    component: mysql
+    project: roboshop
+    tier: database
+spec:
+  selector:
+    component: mysql
+    project: roboshop
+    tier: database
+  ports:
+  - protocol: TCP
+    port: 3306 # Service port, this is the port that other pods will use to access the service
+    targetPort: 3306 # container port, this is the port that the container is listening on
