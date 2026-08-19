@@ -99,9 +99,12 @@ spec:
         project: roboshop
         tier: web
     spec:
+      imagePullSecrets:
+      - name: ecr-creds
+      # This is the container that will be created in the pod. The deployment will create pods  
       containers:
       - name: frontend
-        image: joindevops/frontend:v1
+        image: 641361263136.dkr.ecr.us-east-1.amazonaws.com/frontend:v1
         volumeMounts:
             - name: nginx-config
               mountPath: /etc/nginx/nginx.conf

@@ -38,9 +38,12 @@ spec:
         project: roboshop
         tier: app
     spec:
-      containers:
+      imagePullSecrets:
       - name: shipping
-        image: joindevops/shipping:v1
+      # This is the container that will be created in the pod. The deployment will create pods  
+      containers:
+      - name: catalogue
+        image: 641361263136.dkr.ecr.us-east-1.amazonaws.com/shipping:v1
         envFrom:
         - configMapRef:
             name: shipping

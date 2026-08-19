@@ -39,9 +39,12 @@ spec:
         project: roboshop
         tier: app
     spec:
+      imagePullSecrets:
+      - name: ecr-creds
+      # This is the container that will be created in the pod. The deployment will create pods  
       containers:
       - name: cart
-        image: joindevops/cart:v1
+        image: 641361263136.dkr.ecr.us-east-1.amazonaws.com/cart:v1
         envFrom:
         - configMapRef:
             name: cart
