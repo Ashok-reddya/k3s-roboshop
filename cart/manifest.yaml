@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cart
+  namespace: roboshop
+  labels:
+    component: cart
+    project: roboshop
+    tier: app
+data:
+  REDIS_HOST: "redis"
+  CATALOGUE_HOST: "catalogue"
+  CATALOGUE_PORT: "8080"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cart
+  namespace: roboshop
+  # deployment labels are used to identify the deployment and its associated resources
+  labels:
+    component: cart
+    project: roboshop
+    tier: app
+spec:
+  replicas: 1
+  # These are the labels replica sets use to create pods. The replica set will create pods with these labels, and the deployment will manage those pods.
+  # This should match pod labels in the template section below, so that the deployment can manage the pods it creates.
+  selector:
+    matchLabels:
+      component: cart
+      project: roboshop
+      tier: app
+  # This is the pod template that defines the pods that will be created by the deployment. The deployment will create pods with these labels, and the replica set will manage those pods.
+  template:
+    metadata:
+      labels:
+        component: cart
+        project: roboshop
+        tier: app
+    spec:
+      containers:
+      - name: cart
+        image: joindevops/cart:v1
+        envFrom:
+        - configMapRef:
+            name: cart
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cart
+  namespace: roboshop
+  labels:
+    component: cart
+    project: roboshop
+    tier: app
+spec:
+  selector:
+    component: cart
+    project: roboshop
+    tier: app
+  ports:
+  - protocol: TCP
+    port: 8080 # Service port, this is the port that other pods will use to access the service
+    targetPort: 8080 # container port, this is the port that the container is listening on
